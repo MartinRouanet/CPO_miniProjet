@@ -1,6 +1,8 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ * MiniProjet_MasterMind
+ * TDC - Groupe 1
+ * Martin Rouanet
+ * 20 Novembre 2024
  */
 package cpo_miniprojet;
 
@@ -15,10 +17,5 @@ public class CPO_miniProjet {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-    }
-    
-    
-    public void hello() {
-        
     }
 }

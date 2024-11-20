@@ -17,4 +17,8 @@ public class CPO_miniProjet {
         // TODO code application logic here
     }
     
+    
+    public void hello() {
+        
+    }
 }

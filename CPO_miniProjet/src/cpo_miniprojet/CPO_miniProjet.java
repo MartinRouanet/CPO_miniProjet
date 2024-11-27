@@ -19,7 +19,7 @@ public class CPO_miniProjet {
      */
 
     public static void main(String[] args) {
-        // Création d'une liste de couleurs disponibles pour Combinaison
+    // Création d'une liste de couleurs disponibles pour Combinaison
         ArrayList<Character> couleurs = new ArrayList<>();
         couleurs.add('R'); // Rouge
         couleurs.add('B'); // Bleu

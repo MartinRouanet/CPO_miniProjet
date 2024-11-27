@@ -19,25 +19,32 @@ public class CPO_miniProjet {
      */
 
     public static void main(String[] args) {
-    // Création d'une liste de couleurs disponibles pour Combinaison
-        ArrayList<Character> couleurs = new ArrayList<>();
-        couleurs.add('R'); // Rouge
-        couleurs.add('B'); // Bleu
-        couleurs.add('G'); // Vert
-        couleurs.add('Y'); // Jaune
+    // Création d'une combinaison secrète fixe pour tester
+        Pion[] secretPions = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')};
+        Combinaison combinaisonSecrete = new Combinaison(secretPions);
 
-        // Génération d'une combinaison aléatoire
-        Combinaison combinaisonSecrete = Combinaison.genererAleatoire(4, couleurs);
-        System.out.println("Combinaison secrete : " + combinaisonSecrete);
+        // Initialisation du plateau avec un maximum de 5 tours
+        PlateauDeJeu plateau = new PlateauDeJeu(combinaisonSecrete, 5);
 
-        // Création d'une combinaison proposée par le joueur
-        Pion[] proposition = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')};
-        Combinaison combinaisonProposee = new Combinaison(proposition);
-        System.out.println("Combinaison proposee : " + combinaisonProposee);
+        // Ajout de plusieurs tentatives
+        Pion[] tentative1 = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')}; // Bonne combinaison
+        Pion[] tentative2 = {new Pion('B'), new Pion('R'), new Pion('Y'), new Pion('G')}; // Combinaison incorrecte
+        Pion[] tentative3 = {new Pion('R'), new Pion('G'), new Pion('B'), new Pion('Y')}; // Combinaison partiellement correcte
 
-        // Comparaison des combinaisons
-        int[] resultats = combinaisonSecrete.comparer(combinaisonProposee);
-        System.out.println("Pions noirs (bien places) : " + resultats[0]);
-        System.out.println("Pions blancs (mal places) : " + resultats[1]);
+        plateau.proposerCombinaison(new Combinaison(tentative1));
+        plateau.proposerCombinaison(new Combinaison(tentative2));
+        plateau.proposerCombinaison(new Combinaison(tentative3));
+
+        // Affichage de l'état du plateau
+        plateau.afficherPlateau();
+
+        // Vérification des conditions de victoire et défaite
+        if (plateau.estVictoire()) {
+            System.out.println("Victoire ! Vous avez devine la combinaison secrete.");
+        } else if (plateau.estDefaite()) {
+            System.out.println("Defaite ! Vous avez epuise toutes vos tentatives.");
+        } else {
+            System.out.println("La partie continue...");
+        }
     }
 }

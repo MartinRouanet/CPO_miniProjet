@@ -6,6 +6,8 @@
  */
 package cpo_miniprojet;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author marti
@@ -17,14 +19,25 @@ public class CPO_miniProjet {
      */
 
     public static void main(String[] args) {
-        // Instanciation de différents objets Pion
-        Pion pionRouge = new Pion('R'); // Rouge
-        Pion pionBleu = new Pion('B');  // Bleu
-        Pion pionVert = new Pion('V');  // Vert
+        // Création d'une liste de couleurs disponibles pour Combinaison
+        ArrayList<Character> couleurs = new ArrayList<>();
+        couleurs.add('R'); // Rouge
+        couleurs.add('B'); // Bleu
+        couleurs.add('G'); // Vert
+        couleurs.add('Y'); // Jaune
 
-        // Test des méthodes getCouleur() et toString()
-        System.out.println("Representation du pion rouge : " + pionRouge.getCouleur());
-        System.out.println("Representation du pion bleu : " + pionBleu);
-        System.out.println("Representation du pion vert : " + pionVert.getCouleur());
+        // Génération d'une combinaison aléatoire
+        Combinaison combinaisonSecrete = Combinaison.genererAleatoire(4, couleurs);
+        System.out.println("Combinaison secrete : " + combinaisonSecrete);
+
+        // Création d'une combinaison proposée par le joueur
+        Pion[] proposition = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')};
+        Combinaison combinaisonProposee = new Combinaison(proposition);
+        System.out.println("Combinaison proposee : " + combinaisonProposee);
+
+        // Comparaison des combinaisons
+        int[] resultats = combinaisonSecrete.comparer(combinaisonProposee);
+        System.out.println("Pions noirs (bien places) : " + resultats[0]);
+        System.out.println("Pions blancs (mal places) : " + resultats[1]);
     }
 }

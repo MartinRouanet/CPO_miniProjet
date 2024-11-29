@@ -7,6 +7,7 @@
 package cpo_miniprojet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -19,32 +20,27 @@ public class CPO_miniProjet {
      */
 
     public static void main(String[] args) {
-    // Création d'une combinaison secrète fixe pour tester
-        Pion[] secretPions = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')};
-        Combinaison combinaisonSecrete = new Combinaison(secretPions);
+       // Liste des couleurs possibles pour les pions
+        List<Character> couleursDisponibles = new ArrayList<>();
+        couleursDisponibles.add('R'); // Rouge
+        couleursDisponibles.add('B'); // Bleu
+        couleursDisponibles.add('G'); // Vert
+        couleursDisponibles.add('Y'); // Jaune
 
-        // Initialisation du plateau avec un maximum de 5 tours
-        PlateauDeJeu plateau = new PlateauDeJeu(combinaisonSecrete, 5);
+        // Paramètres du jeu : taille de la combinaison, nombre de tours max
+        int tailleCombinaison = 4;
+        int nbToursMax = 10;
 
-        // Ajout de plusieurs tentatives
-        Pion[] tentative1 = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')}; // Bonne combinaison
-        Pion[] tentative2 = {new Pion('B'), new Pion('R'), new Pion('Y'), new Pion('G')}; // Combinaison incorrecte
-        Pion[] tentative3 = {new Pion('R'), new Pion('G'), new Pion('B'), new Pion('Y')}; // Combinaison partiellement correcte
+        // Créer une instance de la classe Partie et démarrer le jeu
+        Partie partie = new Partie(tailleCombinaison, nbToursMax, couleursDisponibles);
 
-        plateau.proposerCombinaison(new Combinaison(tentative1));
-        plateau.proposerCombinaison(new Combinaison(tentative2));
-        plateau.proposerCombinaison(new Combinaison(tentative3));
+        // Afficher les règles du jeu
+        partie.afficherRegles();
 
-        // Affichage de l'état du plateau
-        plateau.afficherPlateau();
-
-        // Vérification des conditions de victoire et défaite
-        if (plateau.estVictoire()) {
-            System.out.println("Victoire ! Vous avez devine la combinaison secrete.");
-        } else if (plateau.estDefaite()) {
-            System.out.println("Defaite ! Vous avez epuise toutes vos tentatives.");
-        } else {
-            System.out.println("La partie continue...");
-        }
+        // Lancer la partie
+        partie.lancerPartie();
+        
+        // Terminer la partie et afficher le résultat
+        partie.terminerPartie();
     }
 }

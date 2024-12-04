@@ -11,77 +11,67 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 /**
  *
  * @author marti
  */
 public class CPO_Mini_Projet extends javax.swing.JFrame {
-        private PlateauDeJeu plateau;
-        private int nbToursMax;
-        private Combinaison combinaisonSecrete;
-        private int tailleCombinaison;
-        private ArrayList<Character> couleursDisponibles;
+    private Partie partie; // Référence à la classe Partie
+    private JButton[][] boutons; // Matrice de boutons pour représenter le plateau graphique
+    private int nbToursMax = 12;
+    private int tailleCombinaison = 4;
+
     /**
      * Creates new form CPO_Mini_Projet
      */
     public CPO_Mini_Projet() {
-        this.nbToursMax = 10;
-        this.tailleCombinaison = 4;
-        this.couleursDisponibles = new ArrayList<>();
-        this.couleursDisponibles.add('R');
-        this.couleursDisponibles.add('B');
-        this.couleursDisponibles.add('G');
-        this.couleursDisponibles.add('Y');
-        
-        this.plateau = new PlateauDeJeu(combinaisonSecrete, nbToursMax);
-        this.couleursDisponibles = new ArrayList<>(couleursDisponibles);
-        
+        // Initialiser les couleurs disponibles
+        ArrayList<Character> couleursDisponibles = new ArrayList<>();
+        couleursDisponibles.add('R');
+        couleursDisponibles.add('B');
+        couleursDisponibles.add('G');
+        couleursDisponibles.add('Y');
+
+        // Créer une instance de Partie
+        this.partie = new Partie(tailleCombinaison, nbToursMax, couleursDisponibles);
+
+        // Initialiser les composants
         initComponents();
-        int nbLignes = 12;
-        int nbColonnes = 4;
-        PlateauDeJeu.setLayout(new GridLayout(nbLignes, nbColonnes));
-        for (int i=0; i < nbLignes; i++) {
-            for (int j=0; j < nbColonnes; j++ ) {
-                CelluleGraphique bouton_cellule = new CelluleGraphique(plateau.get(i).get(j), 36, 36);
-                PlateauDeJeu.add(bouton_cellule); // ajout au Jpanel PlateauDeJeu
- }
-}
-    }
 
-public void CPO_Mini_Projet(int tailleCombinaison, int nbToursMax, List<Character> couleursDisponibles) {
-        this.couleursDisponibles = new ArrayList<>(couleursDisponibles);
-        
-        // Générer une combinaison secrète aléatoire
-        Pion[] combinaisonsSecretes = new Pion[tailleCombinaison];
-        for (int i = 0; i < tailleCombinaison; i++) {
-            char couleurAleatoire = couleursDisponibles.get((int) (Math.random() * couleursDisponibles.size()));
-            combinaisonsSecretes[i] = new Pion(couleurAleatoire);
+        // Configurer le plateau graphique
+        boutons = new JButton[nbToursMax][tailleCombinaison];
+        PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison));
+
+        for (int i = 0; i < nbToursMax; i++) {
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[i][j] = new JButton(); // Créer un bouton pour chaque cellule
+                boutons[i][j].setEnabled(false); // Désactiver les boutons (lecture seule)
+                PlateauDeJeu.add(boutons[i][j]); // Ajouter le bouton au plateau graphique
+            }
         }
-        Combinaison combinaisonSecrete = new Combinaison(combinaisonsSecretes);
-        
-        // Créer une instance de PlateauDeJeu avec la combinaison secrète et le nombre de tours
-        this.plateau = new PlateauDeJeu(combinaisonSecrete, nbToursMax);
     }
 
-public class CelluleGraphique extends JButton {
-    int largeur; // largeur en pixel de la cellule
-    int hauteur; // hauteur en pixel de la cellule
-    private Character couleur;
-    
-    // constructeur (appelé depuis FenetrePrincipale)
-    public CelluleGraphique(int l,int h) {
-    this.largeur = l;
-    this.hauteur = h;
+    /**
+     * Met à jour l'interface graphique en fonction de l'état actuel de la matrice.
+     */
+    public void mettreAJourPlateau() {
+        Pion[][] tableauTentatives = partie.getTableauTentatives(); // Obtenir la matrice
+        for (int i = 0; i < nbToursMax; i++) {
+            for (int j = 0; j < tailleCombinaison; j++) {
+                if (tableauTentatives[i][j] != null) {
+                    boutons[i][j].setText(String.valueOf(tableauTentatives[i][j].getCouleur()));
+                } else {
+                    boutons[i][j].setText(""); // Cellule vide
+                }
+            }
+        }
     }
-    
-    // Methode gérant le dessin de la cellule
-    @Override
-    protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    }
-}
 
+    /**
+     * Initialise les composants générés automatiquement par l'IDE.
+     */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,6 +82,7 @@ public class CelluleGraphique extends JButton {
     private void initComponents() {
 
         PlateauDeJeu = new javax.swing.JPanel();
+        Entrer = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -111,8 +102,20 @@ public class CelluleGraphique extends JButton {
 
         getContentPane().add(PlateauDeJeu, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, 400, 400));
 
+        Entrer.setText("jButton1");
+        Entrer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EntrerActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Entrer, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 160, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void EntrerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EntrerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EntrerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -150,6 +153,7 @@ public class CelluleGraphique extends JButton {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Entrer;
     private javax.swing.JPanel PlateauDeJeu;
     // End of variables declaration//GEN-END:variables
 }

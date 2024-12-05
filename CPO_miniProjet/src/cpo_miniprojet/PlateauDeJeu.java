@@ -27,14 +27,18 @@ public class PlateauDeJeu {
     }
 
     // Méthode pour ajouter une tentative et calculer les indices
-    public void proposerCombinaison(Combinaison tentative) {
-        tentatives.add(tentative);
+public void proposerCombinaison(Combinaison tentative) {
+    tentatives.add(tentative);
 
-        // Comparaison avec la combinaison secrète
-        int[] resultats = combinaisonSecrete.comparer(tentative);
-        String reponse = resultats[0] + " noirs, " + resultats[1] + " blancs";
-        reponses.add(reponse);
-    }
+    // Comparaison avec la combinaison secrète
+    int[] resultats = combinaisonSecrete.comparer(tentative);
+    String reponse = resultats[0] + " noirs, " + resultats[1] + " blancs";
+    reponses.add(reponse);
+
+    // Afficher les résultats immédiatement après la tentative
+    System.out.println("Tentative : " + tentative);
+    System.out.println("Resultat : " + reponse);
+}
 
     // Méthode pour afficher l'état actuel du plateau
     public void afficherPlateau() {

@@ -54,22 +54,6 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
 
     /**
-     * Met à jour l'interface graphique en fonction de l'état actuel de la matrice.
-     */
-    public void mettreAJourPlateau() {
-        Pion[][] tableauTentatives = partie.getTableauTentatives(); // Obtenir la matrice
-        for (int i = 0; i < nbToursMax; i++) {
-            for (int j = 0; j < tailleCombinaison; j++) {
-                if (tableauTentatives[i][j] != null) {
-                    boutons[i][j].setText(String.valueOf(tableauTentatives[i][j].getCouleur()));
-                } else {
-                    boutons[i][j].setText(""); // Cellule vide
-                }
-            }
-        }
-    }
-
-    /**
      * Initialise les composants générés automatiquement par l'IDE.
      */
     /**

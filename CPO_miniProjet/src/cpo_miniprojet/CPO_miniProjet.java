@@ -18,29 +18,25 @@ public class CPO_miniProjet {
     /**
      * @param args the command line arguments
      */
-
     public static void main(String[] args) {
-       // Liste des couleurs possibles pour les pions
-        List<Character> couleursDisponibles = new ArrayList<>();
+        // TODO code application logic here
+                // Liste des couleurs disponibles pour la combinaison
+        ArrayList<Character> couleursDisponibles = new ArrayList<>();
         couleursDisponibles.add('R'); // Rouge
         couleursDisponibles.add('B'); // Bleu
         couleursDisponibles.add('G'); // Vert
         couleursDisponibles.add('Y'); // Jaune
 
-        // Paramètres du jeu : taille de la combinaison, nombre de tours max
-        int tailleCombinaison = 4;
-        int nbToursMax = 10;
-
-        // Créer une instance de la classe Partie et démarrer le jeu
-        Partie partie = new Partie(tailleCombinaison, nbToursMax, couleursDisponibles);
-
+        // Initialisation d'une partie avec une combinaison de taille 4 et 5 tours maximum
+        Partie partie = new Partie(4, 12, couleursDisponibles);
+        
         // Afficher les règles du jeu
         partie.afficherRegles();
-
+        
         // Lancer la partie
         partie.lancerPartie();
         
-        // Terminer la partie et afficher le résultat
+        // Terminer la partie
         partie.terminerPartie();
     }
 }

@@ -21,6 +21,8 @@ public class Partie {
     private Pion[][] tableauTentatives; // Matrice pour stocker les 12 tentatives de 4 pions
     private int tailleCombinaison;
     private int nbToursMax;
+    private char[] tentativeCourante; // Représente la combinaison actuelle
+    private int tourCourant; // Indique le tour actuel
 
     public Partie(int tailleCombinaison, int nbToursMax, List<Character> couleursDisponibles) {
         this.tailleCombinaison = tailleCombinaison;
@@ -28,6 +30,8 @@ public class Partie {
         this.couleursDisponibles = new ArrayList<>(couleursDisponibles);
         this.scanner = new Scanner(System.in);
         this.tableauTentatives = new Pion[nbToursMax][tailleCombinaison]; // Matrice vide
+        this.tourCourant = 0; // Initialisation du premier tour
+        this.tentativeCourante = new char[tailleCombinaison]; // Réinitialisation des tentatives courantes
 
         // Générer une combinaison secrète aléatoire
         Pion[] combinaisonsSecretes = new Pion[tailleCombinaison];
@@ -56,44 +60,42 @@ public class Partie {
         }
     }
 
-public void lancerPartie() {
-    int tour = 0;
-    while (!plateau.estVictoire() && !plateau.estDefaite() && tour < nbToursMax) {
-        afficherTableau(); // Afficher le tableau actuel
-        
-        System.out.println("\nTour " + (tour + 1) + ": Entrez votre combinaison (" + tailleCombinaison + " lettres parmi " + couleursDisponibles + ") :");
-        String input = scanner.nextLine().toUpperCase();
-        
-        // Validation de l'entrée utilisateur
-        if (input.length() != tailleCombinaison || !input.matches("[" + couleursDisponibles.stream().map(String::valueOf).collect(Collectors.joining()) + "]{" + tailleCombinaison + "}")) {
-        System.out.println("Entrée invalide. Veuillez entrer exactement " + tailleCombinaison + " lettres parmi " + couleursDisponibles + ".");
-        continue;
-    }
+    public void lancerPartie() {
+        while (!plateau.estVictoire() && !plateau.estDefaite() && tourCourant < nbToursMax) {
+            afficherTableau(); // Afficher le tableau actuel
+            
+            System.out.println("\nTour " + (tourCourant + 1) + ": Entrez votre combinaison (" + tailleCombinaison + " lettres parmi " + couleursDisponibles + ") :");
+            String input = scanner.nextLine().toUpperCase();
 
-        // Créer une tentative
-        Pion[] pionsProposes = new Pion[tailleCombinaison];
-        for (int i = 0; i < tailleCombinaison; i++) {
-            pionsProposes[i] = new Pion(input.charAt(i));
-            tableauTentatives[tour][i] = pionsProposes[i]; // Mettre à jour la matrice
+            // Validation de l'entrée utilisateur
+            if (input.length() != tailleCombinaison || !input.matches("[" + couleursDisponibles.stream().map(String::valueOf).collect(Collectors.joining()) + "]{" + tailleCombinaison + "}")) {
+                System.out.println("Entrée invalide. Veuillez entrer exactement " + tailleCombinaison + " lettres parmi " + couleursDisponibles + ".");
+                continue;
+            }
+
+            // Créer une tentative
+            Pion[] pionsProposes = new Pion[tailleCombinaison];
+            for (int i = 0; i < tailleCombinaison; i++) {
+                pionsProposes[i] = new Pion(input.charAt(i));
+                tableauTentatives[tourCourant][i] = pionsProposes[i]; // Mettre à jour la matrice
+            }
+            Combinaison tentative = new Combinaison(pionsProposes);
+
+            // Ajouter la tentative au plateau
+            plateau.proposerCombinaison(tentative);
+
+            // Conditions de victoire ou défaite
+            if (plateau.estVictoire()) {
+                System.out.println("Félicitations ! Vous avez deviné la combinaison secrète.");
+                break;
+            } else if (plateau.estDefaite()) {
+                System.out.println("Désolé, vous avez épuisé toutes vos tentatives. La combinaison secrète était : " + plateau.combinaisonSecrete);
+                break;
+            }
+
+            incrementerTour(); // Passe au tour suivant
         }
-        Combinaison tentative = new Combinaison(pionsProposes);
-
-        // Ajouter la tentative au plateau
-        plateau.proposerCombinaison(tentative);
-
-        // Conditions de victoire ou défaite
-        if (plateau.estVictoire()) {
-            System.out.println("Félicitations ! Vous avez deviné la combinaison secrète.");
-            break;
-        } else if (plateau.estDefaite()) {
-            System.out.println("Désolé, vous avez épuisé toutes vos tentatives. La combinaison secrète était : "
-                    + plateau.combinaisonSecrete);
-            break;
-        }
-
-        tour++;
     }
-}
 
     public void afficherRegles() {
         System.out.println("Regles du jeu Mastermind :");
@@ -108,5 +110,25 @@ public void lancerPartie() {
     public void terminerPartie() {
         System.out.println("Merci d'avoir joue a Mastermind !");
         System.out.println("Partie terminee.");
+    }
+
+    public void setTentativeCouleur(int i, int j, char couleur) {
+        if (i == tourCourant) { // Vérifie si on est dans le bon tour
+            tentativeCourante[j] = couleur; // Met à jour la tentative en cours
+        }
+    }
+
+    // Gestion des tours
+    public int getTourCourant() {
+        return tourCourant;
+    }
+
+    public void incrementerTour() {
+        if (tourCourant < nbToursMax - 1) {
+            tourCourant++;
+            tentativeCourante = new char[tailleCombinaison]; // Réinitialiser la tentative
+        } else {
+            System.out.println("Tous les tours sont terminés !");
+        }
     }
 }

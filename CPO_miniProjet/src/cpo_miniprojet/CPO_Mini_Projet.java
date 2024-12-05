@@ -5,6 +5,7 @@
  * 20 Novembre 2024
  */
 package cpo_miniprojet;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -22,10 +23,6 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private JButton[][] boutons; // Matrice de boutons pour représenter le plateau graphique
     private int nbToursMax = 12;
     private int tailleCombinaison = 4;
-    private void handleButtonClick(int i, int j) {
-    // Exemple d'action : afficher la position du bouton cliqué
-    System.out.println("Bouton cliqué : Ligne " + i + ", Colonne " + j);
-    }
 
     /**
      * Creates new form CPO_Mini_Projet
@@ -62,6 +59,36 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
             }
         }
     }
+
+private Color getColorFromChar(char colorChar) {
+    switch (colorChar) {
+        case 'R': return Color.RED;
+        case 'B': return Color.BLUE;
+        case 'G': return Color.GREEN;
+        case 'Y': return Color.YELLOW;
+        default: return Color.WHITE; // Couleur par défaut
+    }
+}
+    
+private void handleButtonClick(int i, int j) {
+    // Changer la couleur du bouton en fonction du choix du joueur
+    char[] couleurs = {'R', 'B', 'G', 'Y'};
+    char couleurActuelle = ' '; // Défaut
+    
+    // Récupérer la couleur actuelle du bouton
+    if (boutons[i][j].getBackground() == Color.RED) couleurActuelle = 'R';
+    else if (boutons[i][j].getBackground() == Color.BLUE) couleurActuelle = 'B';
+    else if (boutons[i][j].getBackground() == Color.GREEN) couleurActuelle = 'G';
+    else if (boutons[i][j].getBackground() == Color.YELLOW) couleurActuelle = 'Y';
+    
+    // Déterminer la couleur suivante
+    int index = (new String(couleurs).indexOf(couleurActuelle) + 1) % couleurs.length;
+    char nouvelleCouleur = couleurs[index];
+    boutons[i][j].setBackground(getColorFromChar(nouvelleCouleur)); // Appliquer la nouvelle couleur
+    
+    // Mettre à jour la tentative actuelle dans la classe Partie
+    partie.setTentativeCouleur(i, j, nouvelleCouleur); // Méthode à implémenter dans Partie
+}
     /**
      * Initialise les composants générés automatiquement par l'IDE.
      */

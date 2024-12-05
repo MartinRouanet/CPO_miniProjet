@@ -22,6 +22,10 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private JButton[][] boutons; // Matrice de boutons pour représenter le plateau graphique
     private int nbToursMax = 12;
     private int tailleCombinaison = 4;
+    private void handleButtonClick(int i, int j) {
+    // Exemple d'action : afficher la position du bouton cliqué
+    System.out.println("Bouton cliqué : Ligne " + i + ", Colonne " + j);
+    }
 
     /**
      * Creates new form CPO_Mini_Projet
@@ -46,13 +50,18 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
 
         for (int i = 0; i < nbToursMax; i++) {
             for (int j = 0; j < tailleCombinaison; j++) {
-                boutons[i][j] = new JButton(); // Créer un bouton pour chaque cellule
-                boutons[i][j].setEnabled(false); // Désactiver les boutons (lecture seule)
+                boutons[i][j] = new JButton(); // Créer un bouton
+                boutons[i][j].setEnabled(false); // Initialement désactivé
+
+                // Capture des indices locaux pour la lambda
+                int ligne = i;
+                int colonne = j;
+
+                boutons[i][j].addActionListener(e -> handleButtonClick(ligne, colonne)); // Associer l'action
                 PlateauDeJeu.add(boutons[i][j]); // Ajouter le bouton au plateau graphique
             }
         }
     }
-
     /**
      * Initialise les composants générés automatiquement par l'IDE.
      */

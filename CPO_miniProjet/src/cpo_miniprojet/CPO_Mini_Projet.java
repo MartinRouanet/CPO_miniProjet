@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
  *
- * @author marti
+ * @author martin
  */
 public class CPO_Mini_Projet extends javax.swing.JFrame {
     private Partie partie; // Référence à la classe Partie
@@ -24,10 +25,11 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private int nbToursMax = 12;
     private int tailleCombinaison = 4;
 
+
     /**
      * Creates new form CPO_Mini_Projet
      */
-    public CPO_Mini_Projet() {
+public CPO_Mini_Projet() {
         // Initialiser les couleurs disponibles
         ArrayList<Character> couleursDisponibles = new ArrayList<>();
         couleursDisponibles.add('R');
@@ -40,24 +42,35 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
 
         // Initialiser les composants
         initComponents();
+        
+            // Configurer le plateau graphique
+    boutons = new JButton[nbToursMax][tailleCombinaison+2];
+    PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison));
+    
+    for (int i = 0; i < nbToursMax; i++) {
+        for (int j = 0; j < tailleCombinaison; j++) {
+            boutons[i][j] = new JButton(); // Créer un bouton
+            boutons[i][j].setEnabled(false); // Initialement désactivé
 
-        // Configurer le plateau graphique
-        boutons = new JButton[nbToursMax][tailleCombinaison];
-        PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison));
+            // Capture des indices locaux pour la lambda
+            int ligne = i;
+            int colonne = j;
 
-        for (int i = 0; i < nbToursMax; i++) {
-            for (int j = 0; j < tailleCombinaison; j++) {
-                boutons[i][j] = new JButton(); // Créer un bouton
-                boutons[i][j].setEnabled(false); // Initialement désactivé
-
-                // Capture des indices locaux pour la lambda
-                int ligne = i;
-                int colonne = j;
-
-                boutons[i][j].addActionListener(e -> handleButtonClick(ligne, colonne)); // Associer l'action
-                PlateauDeJeu.add(boutons[i][j]); // Ajouter le bouton au plateau graphique
-            }
+            boutons[i][j].addActionListener(e -> handleButtonClick(ligne, colonne)); // Associer l'action
+            PlateauDeJeu.add(boutons[i][j]); // Ajouter le bouton au plateau graphique
         }
+        boutons[i][tailleCombinaison] = new JButton(); // Créer un bouton
+        boutons[i][tailleCombinaison].setEnabled(true); // Initialement désactivé
+        boutons[i][tailleCombinaison].setBackground(Color.white); // Mettre bouton en blanc
+        PlateauDeJeu.add(boutons[i][tailleCombinaison]); // Ajouter le bouton au plateau graphique
+            
+        boutons[i][tailleCombinaison] = new JButton(); // Créer un bouton
+        boutons[i][tailleCombinaison].setEnabled(true); // Initialement désactivé
+        boutons[i][tailleCombinaison].setBackground(Color.black); // Mettre bouton en blanc
+        boutons[i][tailleCombinaison].setForeground(Color.WHITE); // Mettre écriture bouton blanc
+        PlateauDeJeu.add(boutons[i][tailleCombinaison]); // Ajouter le bouton au plateau graphique
+    }
+
     }
 
 private Color getColorFromChar(char colorChar) {
@@ -89,6 +102,7 @@ private void handleButtonClick(int i, int j) {
     // Mettre à jour la tentative actuelle dans la classe Partie
     partie.setTentativeCouleur(i, j, nouvelleCouleur); // Méthode à implémenter dans Partie
 }
+
     /**
      * Initialise les composants générés automatiquement par l'IDE.
      */
@@ -102,7 +116,6 @@ private void handleButtonClick(int i, int j) {
     private void initComponents() {
 
         PlateauDeJeu = new javax.swing.JPanel();
-        Entrer = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -122,20 +135,8 @@ private void handleButtonClick(int i, int j) {
 
         getContentPane().add(PlateauDeJeu, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, 400, 400));
 
-        Entrer.setText("jButton1");
-        Entrer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EntrerActionPerformed(evt);
-            }
-        });
-        getContentPane().add(Entrer, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 160, -1, -1));
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void EntrerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EntrerActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_EntrerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -173,7 +174,6 @@ private void handleButtonClick(int i, int j) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Entrer;
     private javax.swing.JPanel PlateauDeJeu;
     // End of variables declaration//GEN-END:variables
 }

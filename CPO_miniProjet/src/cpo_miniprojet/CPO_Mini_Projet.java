@@ -43,35 +43,70 @@ public CPO_Mini_Projet() {
         // Initialiser les composants
         initComponents();
         
-            // Configurer le plateau graphique
-    boutons = new JButton[nbToursMax][tailleCombinaison+2];
-    PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison));
+        // Initialisation du plateau graphique
+        initialiserPlateauGraphique();
+
+}
+
+private void initialiserPlateauGraphique() {
+    // Créer une matrice pour contenir les boutons
+    boutons = new JButton[nbToursMax][tailleCombinaison + 2];
     
+    // Configurer le layout du plateau
+    PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison + 2));
+
     for (int i = 0; i < nbToursMax; i++) {
         for (int j = 0; j < tailleCombinaison; j++) {
-            boutons[i][j] = new JButton(); // Créer un bouton
-            boutons[i][j].setEnabled(false); // Initialement désactivé
+            // Initialiser un bouton activé pour permettre l'entrée de texte
+            boutons[i][j] = new JButton();
+            boutons[i][j].setEnabled(true); // Activer le bouton
+            boutons[i][j].setText(""); // Initialiser avec du texte vide
 
-            // Capture des indices locaux pour la lambda
+            // Capturer les indices pour l'utilisation dans la lambda
             int ligne = i;
             int colonne = j;
 
-            boutons[i][j].addActionListener(e -> handleButtonClick(ligne, colonne)); // Associer l'action
-            PlateauDeJeu.add(boutons[i][j]); // Ajouter le bouton au plateau graphique
-        }
-        boutons[i][tailleCombinaison] = new JButton(); // Créer un bouton
-        boutons[i][tailleCombinaison].setEnabled(true); // Initialement désactivé
-        boutons[i][tailleCombinaison].setBackground(Color.white); // Mettre bouton en blanc
-        PlateauDeJeu.add(boutons[i][tailleCombinaison]); // Ajouter le bouton au plateau graphique
-            
-        boutons[i][tailleCombinaison] = new JButton(); // Créer un bouton
-        boutons[i][tailleCombinaison].setEnabled(true); // Initialement désactivé
-        boutons[i][tailleCombinaison].setBackground(Color.black); // Mettre bouton en blanc
-        boutons[i][tailleCombinaison].setForeground(Color.WHITE); // Mettre écriture bouton blanc
-        PlateauDeJeu.add(boutons[i][tailleCombinaison]); // Ajouter le bouton au plateau graphique
-    }
+            // Ajouter un ActionListener pour chaque bouton
+            boutons[i][j].addActionListener(e -> {
+                String texte = JOptionPane.showInputDialog(this, 
+                        "Entrez le nom du pion (R, B, G, Y) :", 
+                        "Nom du Pion", 
+                        JOptionPane.PLAIN_MESSAGE);
 
+                if (texte != null && !texte.isEmpty()) {
+                    // Valider l'entrée et mettre à jour le texte du bouton
+                    texte = texte.toUpperCase(); // Convertir en majuscule
+                    if (texte.matches("[RBGY]")) {
+                        boutons[ligne][colonne].setText(texte);
+                        boutons[ligne][colonne].setForeground(Color.BLACK); // Couleur du texte
+                    } else {
+                        JOptionPane.showMessageDialog(this, 
+                                "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
+                                "Erreur", 
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            
+            // Ajouter le bouton au plateau
+            PlateauDeJeu.add(boutons[i][j]);
+        }
+
+        // Ajouter les deux boutons supplémentaires à la fin de chaque ligne
+        // Premier bouton : fond blanc
+        boutons[i][tailleCombinaison] = new JButton();
+        boutons[i][tailleCombinaison].setEnabled(true);
+        boutons[i][tailleCombinaison].setBackground(Color.WHITE);
+        PlateauDeJeu.add(boutons[i][tailleCombinaison]);
+
+        // Deuxième bouton : fond noir, texte blanc
+        boutons[i][tailleCombinaison + 1] = new JButton();
+        boutons[i][tailleCombinaison + 1].setEnabled(true);
+        boutons[i][tailleCombinaison + 1].setBackground(Color.BLACK);
+        boutons[i][tailleCombinaison + 1].setForeground(Color.WHITE);
+        PlateauDeJeu.add(boutons[i][tailleCombinaison + 1]);
     }
+}
 
 private Color getColorFromChar(char colorChar) {
     switch (colorChar) {

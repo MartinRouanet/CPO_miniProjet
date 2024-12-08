@@ -15,35 +15,21 @@ import java.util.Scanner;
  * @author marti
  */
 public class Pion {
-    // Attribut représentant la couleur du pion
-    private Character couleur;
+    private char couleur; // Couleur du pion
 
-    // Constructeur pour initialiser le pion avec une couleur donnée
-    public Pion(Character couleur) {
+    // Constructeur
+    public Pion(char couleur) {
         this.couleur = couleur;
     }
 
-    // Méthode pour obtenir la couleur du pion
-    public Character getCouleur() {
+    // Getter pour la couleur
+    public char getCouleur() {
         return couleur;
     }
 
-    // Redéfinition de la méthode toString pour afficher la couleur du pion
+    // Méthode toString pour afficher la couleur
     @Override
     public String toString() {
-        return couleur.toString();
-    }
-
-    // Méthode principale pour tester la classe Pion
-    public static void main(String[] args) {
-        // Instanciation de différents objets Pion
-        Pion pionRouge = new Pion('R'); // Rouge
-        Pion pionBleu = new Pion('B');  // Bleu
-        Pion pionVert = new Pion('V');  // Vert
-
-        // Test des méthodes getCouleur() et toString()
-        System.out.println("Couleur du pion rouge : " + pionRouge.getCouleur());
-        System.out.println("Representation du pion bleu : " + pionBleu);
-        System.out.println("Couleur du pion vert : " + pionVert.getCouleur());
+        return String.valueOf(couleur); // Retourne la couleur sous forme de chaîne
     }
 }

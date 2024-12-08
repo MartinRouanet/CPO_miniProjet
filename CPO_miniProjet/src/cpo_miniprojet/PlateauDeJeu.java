@@ -55,37 +55,6 @@ public void proposerCombinaison(Combinaison tentative) {
         return tentatives.size() >= nbToursMax && !estVictoire();
     }
 
-    // Méthode principale pour tester la classe PlateauDeJeu
-    public static void main(String[] args) {
-        // Création d'une combinaison secrète fixe pour tester
-        Pion[] secretPions = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')};
-        Combinaison combinaisonSecrete = new Combinaison(secretPions);
-
-        // Initialisation du plateau avec un maximum de 5 tours
-        PlateauDeJeu plateau = new PlateauDeJeu(combinaisonSecrete, 5);
-
-        // Ajout de plusieurs tentatives
-        Pion[] tentative1 = {new Pion('R'), new Pion('B'), new Pion('G'), new Pion('Y')}; // Bonne combinaison
-        Pion[] tentative2 = {new Pion('B'), new Pion('R'), new Pion('Y'), new Pion('G')}; // Combinaison incorrecte
-        Pion[] tentative3 = {new Pion('R'), new Pion('G'), new Pion('B'), new Pion('Y')}; // Combinaison partiellement correcte
-
-        plateau.proposerCombinaison(new Combinaison(tentative1));
-        plateau.proposerCombinaison(new Combinaison(tentative2));
-        plateau.proposerCombinaison(new Combinaison(tentative3));
-
-        // Affichage de l'état du plateau
-        plateau.afficherPlateau();
-
-        // Vérification des conditions de victoire et défaite
-        if (plateau.estVictoire()) {
-            System.out.println("Victoire ! Vous avez devine la combinaison secrete.");
-        } else if (plateau.estDefaite()) {
-            System.out.println("Defaite ! Vous avez Epuise toutes vos tentatives.");
-        } else {
-            System.out.println("La partie continue...");
-        }
-    }
-
     public boolean estVictoire() {
     // Vérifie si la dernière tentative est identique à la combinaison secrète
     if (tentatives.isEmpty()) {

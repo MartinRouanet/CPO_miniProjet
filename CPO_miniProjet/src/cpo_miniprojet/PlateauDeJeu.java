@@ -5,13 +5,23 @@
  * 20 Novembre 2024
  */
 package cpo_miniprojet;
+import java.awt.GridLayout;
 import java.util.ArrayList;
+import javax.swing.JButton;
 
 /**
  *
  * @author marti
  */
 public class PlateauDeJeu {
+
+    static void add(JButton jButton) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    static void setLayout(GridLayout gridLayout) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     Combinaison combinaisonSecrete; // La combinaison à deviner
     private ArrayList<Combinaison> tentatives; // Historique des combinaisons proposées
     private ArrayList<String> reponses; // Liste des réponses pour chaque tentative

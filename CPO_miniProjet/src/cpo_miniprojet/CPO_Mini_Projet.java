@@ -5,7 +5,9 @@
  * 20 Novembre 2024
  */
 package cpo_miniprojet;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -24,120 +26,146 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private JButton[][] boutons; // Matrice de boutons pour représenter le plateau graphique
     private int nbToursMax = 12;
     private int tailleCombinaison = 4;
+    private int tourCourant = 0; // Le tour actuel
 
-
-    /**
-     * Creates new form CPO_Mini_Projet
-     */
-public CPO_Mini_Projet() {
-        // Initialiser les couleurs disponibles
+    public CPO_Mini_Projet() {
         ArrayList<Character> couleursDisponibles = new ArrayList<>();
         couleursDisponibles.add('R');
         couleursDisponibles.add('B');
         couleursDisponibles.add('G');
         couleursDisponibles.add('Y');
 
-        // Créer une instance de Partie
         this.partie = new Partie(tailleCombinaison, nbToursMax, couleursDisponibles);
-
-        // Initialiser les composants
         initComponents();
-        
-        // Initialisation du plateau graphique
         initialiserPlateauGraphique();
+    }
 
-}
+    private void initialiserPlateauGraphique() {
+        boutons = new JButton[nbToursMax][tailleCombinaison + 2];
+        PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison + 3)); // Ajouter une colonne pour le bouton "Valider"
 
-private void initialiserPlateauGraphique() {
-    // Créer une matrice pour contenir les boutons
-    boutons = new JButton[nbToursMax][tailleCombinaison + 2];
-    
-    // Configurer le layout du plateau
-    PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison + 2));
+        for (int i = 0; i < nbToursMax; i++) {
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[i][j] = new JButton();
+                boutons[i][j].setEnabled(i == 0); // Activer uniquement la première ligne
+                boutons[i][j].setText("");
+                int ligne = i; // Variable locale pour capturer la valeur de `i`
+                int colonne = j;
 
-    for (int i = 0; i < nbToursMax; i++) {
-        for (int j = 0; j < tailleCombinaison; j++) {
-            // Initialiser un bouton activé pour permettre l'entrée de texte
-            boutons[i][j] = new JButton();
-            boutons[i][j].setEnabled(true); // Activer le bouton
-            boutons[i][j].setText(""); // Initialiser avec du texte vide
+                boutons[i][j].addActionListener(e -> {
+                    String texte = JOptionPane.showInputDialog(this, 
+                            "Entrez le nom du pion (R, B, G, Y) :", 
+                             "Nom du Pion", 
+                            JOptionPane.PLAIN_MESSAGE);
 
-            // Capturer les indices pour l'utilisation dans la lambda
-            int ligne = i;
-            int colonne = j;
-
-            // Ajouter un ActionListener pour chaque bouton
-            boutons[i][j].addActionListener(e -> {
-                String texte = JOptionPane.showInputDialog(this, 
-                        "Entrez le nom du pion (R, B, G, Y) :", 
-                        "Nom du Pion", 
-                        JOptionPane.PLAIN_MESSAGE);
-
-                if (texte != null && !texte.isEmpty()) {
-                    // Valider l'entrée et mettre à jour le texte du bouton
-                    texte = texte.toUpperCase(); // Convertir en majuscule
-                    if (texte.matches("[RBGY]")) {
-                        boutons[ligne][colonne].setText(texte);
-                        boutons[ligne][colonne].setForeground(Color.BLACK); // Couleur du texte
-                    } else {
-                        JOptionPane.showMessageDialog(this, 
-                                "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
-                                "Erreur", 
-                                JOptionPane.ERROR_MESSAGE);
+                    if (texte != null && !texte.isEmpty()) {
+                        texte = texte.toUpperCase();
+                        if (texte.matches("[RBGY]")) {
+                            boutons[ligne][colonne].setText(texte);
+                            boutons[ligne][colonne].setForeground(Color.BLACK);
+                        } else {
+                            JOptionPane.showMessageDialog(this, 
+                                    "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
+                                    "Erreur", 
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
+                });
+
+                PlateauDeJeu.add(boutons[i][j]);
+            }
+
+            // Ajouter un bouton "Valider" pour chaque ligne
+            JButton boutonValider = new JButton("Valider");
+            boutonValider.setEnabled(i == 0); // Activer uniquement pour la première ligne
+            int ligne = i; // Variable locale pour capturer la valeur de `i`
+
+            boutonValider.addActionListener(e -> {
+                if (ligne == tourCourant && verifierLigneComplete(ligne)) {
+                    incrementerTour(); // Passer au tour suivant
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                            "Veuillez remplir tous les boutons avant de valider.", 
+                            "Erreur", 
+                            JOptionPane.WARNING_MESSAGE);
                 }
             });
-            
-            // Ajouter le bouton au plateau
-            PlateauDeJeu.add(boutons[i][j]);
+
+            PlateauDeJeu.add(boutonValider);
+
+            // Ajouter les deux boutons supplémentaires à la fin de chaque ligne
+            boutons[i][tailleCombinaison] = new JButton();
+            boutons[i][tailleCombinaison].setEnabled(i == 0); // Activer uniquement la première ligne
+            boutons[i][tailleCombinaison].setBackground(Color.WHITE);
+            PlateauDeJeu.add(boutons[i][tailleCombinaison]);
+
+            boutons[i][tailleCombinaison + 1] = new JButton();
+            boutons[i][tailleCombinaison + 1].setEnabled(i == 0); // Activer uniquement la première ligne
+            boutons[i][tailleCombinaison + 1].setBackground(Color.BLACK);
+            boutons[i][tailleCombinaison + 1].setForeground(Color.WHITE);
+            PlateauDeJeu.add(boutons[i][tailleCombinaison + 1]);
         }
-
-        // Ajouter les deux boutons supplémentaires à la fin de chaque ligne
-        // Premier bouton : fond blanc
-        boutons[i][tailleCombinaison] = new JButton();
-        boutons[i][tailleCombinaison].setEnabled(true);
-        boutons[i][tailleCombinaison].setBackground(Color.WHITE);
-        PlateauDeJeu.add(boutons[i][tailleCombinaison]);
-
-        // Deuxième bouton : fond noir, texte blanc
-        boutons[i][tailleCombinaison + 1] = new JButton();
-        boutons[i][tailleCombinaison + 1].setEnabled(true);
-        boutons[i][tailleCombinaison + 1].setBackground(Color.BLACK);
-        boutons[i][tailleCombinaison + 1].setForeground(Color.WHITE);
-        PlateauDeJeu.add(boutons[i][tailleCombinaison + 1]);
     }
-}
 
-private Color getColorFromChar(char colorChar) {
-    switch (colorChar) {
-        case 'R': return Color.RED;
-        case 'B': return Color.BLUE;
-        case 'G': return Color.GREEN;
-        case 'Y': return Color.YELLOW;
-        default: return Color.WHITE; // Couleur par défaut
+    private boolean verifierLigneComplete(int ligne) {
+        for (int j = 0; j < tailleCombinaison; j++) {
+            if (boutons[ligne][j].getText().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
-}
-    
-private void handleButtonClick(int i, int j) {
-    // Changer la couleur du bouton en fonction du choix du joueur
-    char[] couleurs = {'R', 'B', 'G', 'Y'};
-    char couleurActuelle = ' '; // Défaut
-    
-    // Récupérer la couleur actuelle du bouton
-    if (boutons[i][j].getBackground() == Color.RED) couleurActuelle = 'R';
-    else if (boutons[i][j].getBackground() == Color.BLUE) couleurActuelle = 'B';
-    else if (boutons[i][j].getBackground() == Color.GREEN) couleurActuelle = 'G';
-    else if (boutons[i][j].getBackground() == Color.YELLOW) couleurActuelle = 'Y';
-    
-    // Déterminer la couleur suivante
-    int index = (new String(couleurs).indexOf(couleurActuelle) + 1) % couleurs.length;
-    char nouvelleCouleur = couleurs[index];
-    boutons[i][j].setBackground(getColorFromChar(nouvelleCouleur)); // Appliquer la nouvelle couleur
-    
-    // Mettre à jour la tentative actuelle dans la classe Partie
-    partie.setTentativeCouleur(i, j, nouvelleCouleur); // Méthode à implémenter dans Partie
-}
 
+    private void incrementerTour() {
+        if (tourCourant < nbToursMax - 1) {
+            // Désactiver la ligne actuelle
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(false);
+            }
+
+            // Activer la ligne suivante
+            tourCourant++;
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                    "Tous les tours sont terminés !", 
+                    "Fin de Partie", 
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private Color getColorFromChar(char colorChar) {
+        switch (colorChar) {
+            case 'R': return Color.RED;
+            case 'B': return Color.BLUE;
+            case 'G': return Color.GREEN;
+            case 'Y': return Color.YELLOW;
+            default: return Color.WHITE; // Couleur par défaut
+        }
+    }
+    
+    private void handleButtonClick(int i, int j) {
+        // Changer la couleur du bouton en fonction du choix du joueur
+        char[] couleurs = {'R', 'B', 'G', 'Y'};
+        char couleurActuelle = ' '; // Défaut
+    
+        // Récupérer la couleur actuelle du bouton
+        if (boutons[i][j].getBackground() == Color.RED) couleurActuelle = 'R';
+        else if (boutons[i][j].getBackground() == Color.BLUE) couleurActuelle = 'B';
+        else if (boutons[i][j].getBackground() == Color.GREEN) couleurActuelle = 'G';
+        else if (boutons[i][j].getBackground() == Color.YELLOW) couleurActuelle = 'Y';
+    
+        // Déterminer la couleur suivante
+        int index = (new String(couleurs).indexOf(couleurActuelle) + 1) % couleurs.length;
+        char nouvelleCouleur = couleurs[index];
+        boutons[i][j].setBackground(getColorFromChar(nouvelleCouleur)); // Appliquer la nouvelle couleur
+    
+        // Mettre à jour la tentative actuelle dans la classe Partie
+        partie.setTentativeCouleur(i, j, nouvelleCouleur); // Méthode à implémenter dans Partie
+    }
+    
     /**
      * Initialise les composants générés automatiquement par l'IDE.
      */

@@ -22,6 +22,7 @@ public class PlateauDeJeu {
     static void setLayout(GridLayout gridLayout) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    
     Combinaison combinaisonSecrete; // La combinaison à deviner
     private ArrayList<Combinaison> tentatives; // Historique des combinaisons proposées
     private ArrayList<String> reponses; // Liste des réponses pour chaque tentative
@@ -37,18 +38,18 @@ public class PlateauDeJeu {
     }
 
     // Méthode pour ajouter une tentative et calculer les indices
-public void proposerCombinaison(Combinaison tentative) {
-    tentatives.add(tentative);
+    public void proposerCombinaison(Combinaison tentative) {
+        tentatives.add(tentative);
 
-    // Comparaison avec la combinaison secrète
-    int[] resultats = combinaisonSecrete.comparer(tentative);
-    String reponse = resultats[0] + " noirs, " + resultats[1] + " blancs";
-    reponses.add(reponse);
+        // Comparaison avec la combinaison secrète
+        int[] resultats = combinaisonSecrete.comparer(tentative);
+        String reponse = resultats[0] + " noirs, " + resultats[1] + " blancs";
+        reponses.add(reponse);
 
-    // Afficher les résultats immédiatement après la tentative
-    System.out.println("Tentative : " + tentative);
-    System.out.println("Resultat : " + reponse);
-}
+        // Afficher les résultats immédiatement après la tentative
+        System.out.println("Tentative : " + tentative);
+        System.out.println("Resultat : " + reponse);
+    }
 
     // Méthode pour afficher l'état actuel du plateau
     public void afficherPlateau() {
@@ -75,5 +76,9 @@ public void proposerCombinaison(Combinaison tentative) {
     
     // Si tous les pions sont bien placés (noirs == taille de la combinaison), la victoire est atteinte
     return resultats[0] == taille;
-}
+    }
+
+    Combinaison getCombinaisonSecrete() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

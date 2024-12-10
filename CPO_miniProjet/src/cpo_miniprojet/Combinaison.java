@@ -35,38 +35,38 @@ public class Combinaison {
     }
 
     // Méthode pour comparer deux combinaisons et calculer les indices (noirs et blancs)
-public int[] comparer(Combinaison autre) {
-    int noirs = 0; // Pions bien placés
-    int blancs = 0; // Pions corrects mais mal placés
+    public int[] comparer(Combinaison autre) {
+        int noirs = 0; // Pions bien placés
+        int blancs = 0; // Pions corrects mais mal placés
 
-    boolean[] marquesSecretes = new boolean[taille];
-    boolean[] marquesProposees = new boolean[taille];
+        boolean[] marquesSecretes = new boolean[taille];
+        boolean[] marquesProposees = new boolean[taille];
 
-    // Étape 1 : Calcul des noirs (bien placés)
-    for (int i = 0; i < taille; i++) {
-        if (this.elements[i].getCouleur() == autre.elements[i].getCouleur()) { // Comparaison avec '=='
-            noirs++;
-            marquesSecretes[i] = true;
-            marquesProposees[i] = true;
+        // Étape 1 : Calcul des noirs (bien placés)
+        for (int i = 0; i < taille; i++) {
+            if (this.elements[i].getCouleur() == autre.elements[i].getCouleur()) { // Comparaison avec '=='
+                noirs++;
+                marquesSecretes[i] = true;
+                marquesProposees[i] = true;
+            }
         }
-    }
 
-    // Étape 2 : Calcul des blancs (mal placés)
-    for (int i = 0; i < taille; i++) {
-        if (!marquesProposees[i]) { // Si ce pion proposé n'est pas déjà bien placé
-            for (int j = 0; j < taille; j++) {
-                if (!marquesSecretes[j] && // Si ce pion secret n'est pas déjà utilisé
-                    this.elements[j].getCouleur() == autre.elements[i].getCouleur()) { // Comparaison avec '=='
-                    blancs++;
-                    marquesSecretes[j] = true; // Marque ce pion secret comme utilisé
-                    break; // Sort de la boucle pour éviter de réutiliser le même pion
+        // Étape 2 : Calcul des blancs (mal placés)
+        for (int i = 0; i < taille; i++) {
+            if (!marquesProposees[i]) { // Si ce pion proposé n'est pas déjà bien placé
+                for (int j = 0; j < taille; j++) {
+                    if (!marquesSecretes[j] && // Si ce pion secret n'est pas déjà utilisé
+                        this.elements[j].getCouleur() == autre.elements[i].getCouleur()) { // Comparaison avec '=='
+                        blancs++;
+                        marquesSecretes[j] = true; // Marque ce pion secret comme utilisé
+                        break; // Sort de la boucle pour éviter de réutiliser le même pion
+                    }
                 }
             }
         }
-    }
 
-    return new int[]{noirs, blancs};
-}
+        return new int[]{noirs, blancs};
+    }
 
     // Méthode pour obtenir les couleurs des pions sous forme de tableau de char
     public char[] getCouleurs() {

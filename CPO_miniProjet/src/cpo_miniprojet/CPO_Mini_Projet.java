@@ -117,23 +117,39 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
 
     private void incrementerTour() {
-        if (tourCourant < nbToursMax - 1) {
-            // Désactiver la ligne actuelle
-            for (int j = 0; j < tailleCombinaison; j++) {
-                boutons[tourCourant][j].setEnabled(false);
-            }
-
-            // Activer la ligne suivante
-            tourCourant++;
-            for (int j = 0; j < tailleCombinaison; j++) {
-                boutons[tourCourant][j].setEnabled(true);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, 
-                    "Tous les tours sont terminés !", 
-                    "Fin de Partie", 
-                    JOptionPane.INFORMATION_MESSAGE);
+    if (tourCourant < nbToursMax - 1) {
+        // Désactiver les boutons de la ligne actuelle, y compris le bouton "Valider"
+        for (int j = 0; j < tailleCombinaison; j++) {
+            boutons[tourCourant][j].setEnabled(false);
         }
+        // Désactiver les boutons noirs et blancs de la ligne actuelle
+        boutons[tourCourant][tailleCombinaison].setEnabled(false); // Bouton blanc
+        boutons[tourCourant][tailleCombinaison + 1].setEnabled(false); // Bouton noir
+
+        // Désactiver le bouton "Valider" de la ligne actuelle
+        JButton boutonValiderActuel = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+        boutonValiderActuel.setEnabled(false);
+
+        // Passer au tour suivant
+        tourCourant++;
+
+        // Activer les boutons de la ligne suivante
+        for (int j = 0; j < tailleCombinaison; j++) {
+            boutons[tourCourant][j].setEnabled(true);
+        }
+        // Activer les boutons noirs et blancs de la ligne suivante
+        boutons[tourCourant][tailleCombinaison].setEnabled(true); // Bouton blanc
+        boutons[tourCourant][tailleCombinaison + 1].setEnabled(true); // Bouton noir
+
+        // Activer le bouton "Valider" de la ligne suivante
+        JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+        boutonValiderSuivant.setEnabled(true);
+    } else {
+        JOptionPane.showMessageDialog(this, 
+                "Tous les tours sont terminés !", 
+                "Fin de Partie", 
+                JOptionPane.INFORMATION_MESSAGE);
+    }
     }
 
     private Color getColorFromChar(char colorChar) {

@@ -14,20 +14,11 @@ import javax.swing.JButton;
  * @author marti
  */
 public class PlateauDeJeu {
-
-    static void add(JButton jButton) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    static void setLayout(GridLayout gridLayout) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
     
     Combinaison combinaisonSecrete; // La combinaison à deviner
     private ArrayList<Combinaison> tentatives; // Historique des combinaisons proposées
     private ArrayList<String> reponses; // Liste des réponses pour chaque tentative
     private int nbToursMax; // Nombre maximum de tours autorisés
-    private int taille;
 
     // Constructeur
     public PlateauDeJeu(Combinaison combinaisonSecrete, int nbToursMax) {
@@ -58,8 +49,6 @@ public class PlateauDeJeu {
             System.out.println("Tentative " + (i + 1) + " : " + tentatives.get(i) + " -> " + reponses.get(i));
         }
     }
-    // Vérifie si la dernière tentative correspond à la combinaison secrète
-
 
     // Vérifie si le joueur a épuisé tous ses tours
     public boolean estDefaite() {
@@ -67,18 +56,18 @@ public class PlateauDeJeu {
     }
 
     public boolean estVictoire() {
-    // Vérifie si la dernière tentative est identique à la combinaison secrète
-    if (tentatives.isEmpty()) {
-        return false;
-    }
-    Combinaison derniereTentative = tentatives.get(tentatives.size() - 1);
-    int[] resultats = combinaisonSecrete.comparer(derniereTentative);
-    
-    // Si tous les pions sont bien placés (noirs == taille de la combinaison), la victoire est atteinte
-    return resultats[0] == taille;
+        // Vérifie si la dernière tentative est identique à la combinaison secrète
+        if (tentatives.isEmpty()) {
+            return false;
+        }
+        Combinaison derniereTentative = tentatives.get(tentatives.size() - 1);
+        int[] resultats = combinaisonSecrete.comparer(derniereTentative);
+        
+        // Si tous les pions sont bien placés (noirs == taille de la combinaison), la victoire est atteinte
+        return resultats[0] == combinaisonSecrete.getElements().length;
     }
 
-    Combinaison getCombinaisonSecrete() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Combinaison getCombinaisonSecrete() {
+        return combinaisonSecrete; // Retourne la combinaison secrète associée au plateau
     }
 }

@@ -7,6 +7,7 @@
 package cpo_miniprojet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,8 @@ public class Partie {
     private int nbToursMax;
     private char[] tentativeCourante; // Représente la combinaison actuelle
     private int tourCourant; // Indique le tour actuel
+    private int score;
+    private char[] solution; // La combinaison secrète générée
 
     public Partie(int tailleCombinaison, int nbToursMax, List<Character> couleursDisponibles) {
         this.tailleCombinaison = tailleCombinaison;
@@ -32,6 +35,7 @@ public class Partie {
         this.tableauTentatives = new Pion[nbToursMax][tailleCombinaison]; // Matrice vide
         this.tourCourant = 0; // Initialisation du premier tour
         this.tentativeCourante = new char[tailleCombinaison]; // Réinitialisation des tentatives courantes
+        genererSolution();
 
         // Générer une combinaison secrète aléatoire
         Pion[] combinaisonsSecretes = new Pion[tailleCombinaison];
@@ -43,6 +47,27 @@ public class Partie {
 
         // Créer une instance de PlateauDeJeu
         this.plateau = new PlateauDeJeu(combinaisonSecrete, nbToursMax);
+    }
+    
+    // Méthode pour générer une combinaison secrète aléatoire
+    private void genererSolution() {
+        solution = new char[tailleCombinaison];
+        Random random = new Random();
+        for (int i = 0; i < tailleCombinaison; i++) {
+            solution[i] = couleursDisponibles.get(random.nextInt(couleursDisponibles.size()));
+        }
+    }
+
+    public char[] getSolution() {
+        return solution;
+    }
+    
+    // Getter pour plateau
+    public PlateauDeJeu getPlateau() {
+        if (this.plateau == null) {
+            throw new IllegalStateException("Le plateau n'a pas été initialisé.");
+        }
+        return this.plateau;
     }
 
     public void afficherTableau() {
@@ -59,7 +84,8 @@ public class Partie {
             System.out.println();
         }
     }
-     public void lancerPartie() {
+    
+    public void lancerPartie() {
         while (!plateau.estVictoire() && !plateau.estDefaite() && tourCourant < nbToursMax) {
             afficherTableau(); // Afficher le tableau actuel
             
@@ -84,13 +110,14 @@ public class Partie {
                 System.out.println("Felicitations ! Vous avez devine la combinaison secrete.");
                 break;
             } else if (plateau.estDefaite()) {
-                System.out.println("Desole, vous avez epuise toutes vos tentatives. La combinaison secrete etait : " + plateau.combinaisonSecrete);
+                System.out.println("Desole, vous avez epuise toutes vos tentatives. La combinaison secrete etait : " + plateau.getCombinaisonSecrete());
                 break;
             }
-             incrementerTour(); // Passe au tour suivant
+            incrementerTour(); // Passe au tour suivant
         }
     }
-      public void afficherRegles() {
+     
+    public void afficherRegles() {
         System.out.println("Regles du jeu Mastermind :");
         System.out.println("1. Devinez la combinaison secrete composee de " + tailleCombinaison + " couleurs.");
         System.out.println("2. Les couleurs possibles sont : " + couleursDisponibles);
@@ -104,15 +131,18 @@ public class Partie {
         System.out.println("Merci d'avoir joue a Mastermind !");
         System.out.println("Partie terminee.");
     }
+
     public void setTentativeCouleur(int i, int j, char couleur) {
         if (i == tourCourant) { // Vérifie si on est dans le bon tour
             tentativeCourante[j] = couleur; // Met à jour la tentative en cours
         }
     }
+    
     // Gestion des tours
     public int getTourCourant() {
         return tourCourant;
     }
+    
     public void incrementerTour() {
         if (tourCourant < nbToursMax - 1) {
             tourCourant++;

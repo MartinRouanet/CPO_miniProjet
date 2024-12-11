@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
@@ -41,70 +42,84 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
 
     private void initialiserPlateauGraphique() {
-        boutons = new JButton[nbToursMax][tailleCombinaison + 2];
-        PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison + 3)); // Ajouter une colonne pour le bouton "Valider"
+    boutons = new JButton[nbToursMax][tailleCombinaison + 2];
+    PlateauDeJeu.setLayout(new GridLayout(nbToursMax, tailleCombinaison + 3)); // Ajouter une colonne pour le bouton "Valider"
 
-        for (int i = 0; i < nbToursMax; i++) {
-            for (int j = 0; j < tailleCombinaison; j++) {
-                boutons[i][j] = new JButton();
-                boutons[i][j].setEnabled(i == 0); // Activer uniquement la première ligne
-                boutons[i][j].setText("");
-                int ligne = i; // Variable locale pour capturer la valeur de `i`
-                int colonne = j;
-
-                boutons[i][j].addActionListener(e -> {
-                    String texte = JOptionPane.showInputDialog(this, 
-                            "Entrez le nom du pion (R, B, G, Y) :", 
-                             "Nom du Pion", 
-                            JOptionPane.PLAIN_MESSAGE);
-
-                    if (texte != null && !texte.isEmpty()) {
-                        texte = texte.toUpperCase();
-                        if (texte.matches("[RBGY]")) {
-                            boutons[ligne][colonne].setText(texte);
-                            boutons[ligne][colonne].setForeground(Color.BLACK);
-                        } else {
-                            JOptionPane.showMessageDialog(this, 
-                                    "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
-                                    "Erreur", 
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                });
-
-                PlateauDeJeu.add(boutons[i][j]);
-            }
-
-            // Ajouter un bouton "Valider" pour chaque ligne
-            JButton boutonValider = new JButton("Valider");
-            boutonValider.setEnabled(i == 0); // Activer uniquement pour la première ligne
+    for (int i = 0; i < nbToursMax; i++) {
+        for (int j = 0; j < tailleCombinaison; j++) {
+            boutons[i][j] = new JButton();
+            boutons[i][j].setEnabled(i == 0); // Activer uniquement la première ligne
+            boutons[i][j].setText("");
             int ligne = i; // Variable locale pour capturer la valeur de `i`
+            int colonne = j;
 
-            boutonValider.addActionListener(e -> {
-                if (ligne == tourCourant && verifierLigneComplete(ligne)) {
-                    incrementerTour(); // Passer au tour suivant
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                            "Veuillez remplir tous les boutons avant de valider.", 
-                            "Erreur", 
-                            JOptionPane.WARNING_MESSAGE);
+            // Ajouter un écouteur d'événements pour le bouton
+            boutons[i][j].addActionListener(e -> {
+                String texte = JOptionPane.showInputDialog(this, 
+                        "Entrez le nom du pion (R, B, G, Y) :", 
+                        "Nom du Pion", 
+                        JOptionPane.PLAIN_MESSAGE);
+
+                if (texte != null && !texte.isEmpty()) {
+                    texte = texte.toUpperCase();
+                    if (texte.matches("[RBGY]")) {
+                        boutons[ligne][colonne].setText(texte);
+                        boutons[ligne][colonne].setForeground(Color.BLACK);
+                        // Met à jour la tentative dans la classe Partie
+                        partie.setTentativeCouleur(ligne, colonne, texte.charAt(0));
+                    } else {
+                        JOptionPane.showMessageDialog(this, 
+                                "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
+                                "Erreur", 
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
-            PlateauDeJeu.add(boutonValider);
-
-            // Ajouter les deux boutons supplémentaires à la fin de chaque ligne
-            boutons[i][tailleCombinaison] = new JButton();
-            boutons[i][tailleCombinaison].setEnabled(i == 0); // Activer uniquement la première ligne
-            boutons[i][tailleCombinaison].setBackground(Color.WHITE);
-            PlateauDeJeu.add(boutons[i][tailleCombinaison]);
-
-            boutons[i][tailleCombinaison + 1] = new JButton();
-            boutons[i][tailleCombinaison + 1].setEnabled(i == 0); // Activer uniquement la première ligne
-            boutons[i][tailleCombinaison + 1].setBackground(Color.BLACK);
-            boutons[i][tailleCombinaison + 1].setForeground(Color.WHITE);
-            PlateauDeJeu.add(boutons[i][tailleCombinaison + 1]);
+            PlateauDeJeu.add(boutons[i][j]);
         }
+
+        // Ajouter un bouton "Valider" pour chaque ligne
+        JButton boutonValider = new JButton("Valider");
+        boutonValider.setEnabled(i == 0); // Activer uniquement pour la première ligne
+        int ligne = i; // Variable locale pour capturer la valeur de `i`
+
+        boutonValider.addActionListener(e -> {
+        if (ligne == tourCourant && verifierLigneComplete(ligne)) {
+            incrementerTour(); // Passer au tour suivant
+            mettreAJourScore(ligne); // Met à jour le score pour la ligne actuelle
+
+            // Obtenir la solution secrète
+            char[] solutionSecrete = partie.getSolution();
+            // Calculer et afficher les pions blancs et noirs
+            int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
+            int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
+
+            // Afficher les résultats sur l'interface graphique
+            boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton blanc
+            boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton noir
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                    "Veuillez remplir tous les boutons avant de valider.", 
+                    "Erreur", 
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    });
+
+        PlateauDeJeu.add(boutonValider);
+
+        // Ajouter les deux boutons supplémentaires à la fin de chaque ligne
+        boutons[i][tailleCombinaison] = new JButton();
+        boutons[i][tailleCombinaison].setEnabled(i == 0); // Activer uniquement la première ligne
+        boutons[i][tailleCombinaison].setBackground(Color.WHITE);
+        PlateauDeJeu.add(boutons[i][tailleCombinaison]);
+
+        boutons[i][tailleCombinaison + 1] = new JButton();
+        boutons[i][tailleCombinaison + 1].setEnabled(i == 0); // Activer uniquement la première ligne
+        boutons[i][tailleCombinaison + 1].setBackground(Color.BLACK);
+        boutons[i][tailleCombinaison + 1].setForeground(Color.WHITE);
+        PlateauDeJeu.add(boutons[i][tailleCombinaison + 1]);
+    }
     }
 
     private boolean verifierLigneComplete(int ligne) {
@@ -117,69 +132,104 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
 
     private void incrementerTour() {
-    if (tourCourant < nbToursMax - 1) {
-        // Désactiver les boutons de la ligne actuelle, y compris le bouton "Valider"
+        if (tourCourant < nbToursMax - 1) {
+            // Désactiver les boutons de la ligne actuelle, y compris le bouton "Valider"
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(false);
+            }
+            // Désactiver les boutons noirs et blancs de la ligne actuelle
+            boutons[tourCourant][tailleCombinaison].setEnabled(false); // Bouton blanc
+            boutons[tourCourant][tailleCombinaison + 1].setEnabled(false); // Bouton noir
+
+            // Désactiver le bouton "Valider" de la ligne actuelle
+            JButton boutonValiderActuel = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+            boutonValiderActuel.setEnabled(false);
+
+            // Passer au tour suivant
+            tourCourant++;
+
+            // Activer les boutons de la ligne suivante
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(true);
+            }
+            // Activer les boutons noirs et blancs de la ligne suivante
+            boutons[tourCourant][tailleCombinaison].setEnabled(true); // Bouton blanc
+            boutons[tourCourant][tailleCombinaison + 1].setEnabled(true); // Bouton noir
+
+            // Activer le bouton "Valider" de la ligne suivante
+            JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+            boutonValiderSuivant.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                    "Tous les tours sont terminés !", 
+                    "Fin de Partie", 
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private Pion[] getTentative(int ligne) {
+        Pion[] tentative = new Pion[tailleCombinaison];
         for (int j = 0; j < tailleCombinaison; j++) {
-            boutons[tourCourant][j].setEnabled(false);
+            String texte = boutons[ligne][j].getText();
+            if (!texte.isEmpty()) {
+                tentative[j] = new Pion(texte.charAt(0));
+            }
         }
-        // Désactiver les boutons noirs et blancs de la ligne actuelle
-        boutons[tourCourant][tailleCombinaison].setEnabled(false); // Bouton blanc
-        boutons[tourCourant][tailleCombinaison + 1].setEnabled(false); // Bouton noir
-
-        // Désactiver le bouton "Valider" de la ligne actuelle
-        JButton boutonValiderActuel = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
-        boutonValiderActuel.setEnabled(false);
-
-        // Passer au tour suivant
-        tourCourant++;
-
-        // Activer les boutons de la ligne suivante
-        for (int j = 0; j < tailleCombinaison; j++) {
-            boutons[tourCourant][j].setEnabled(true);
-        }
-        // Activer les boutons noirs et blancs de la ligne suivante
-        boutons[tourCourant][tailleCombinaison].setEnabled(true); // Bouton blanc
-        boutons[tourCourant][tailleCombinaison + 1].setEnabled(true); // Bouton noir
-
-        // Activer le bouton "Valider" de la ligne suivante
-        JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
-        boutonValiderSuivant.setEnabled(true);
-    } else {
-        JOptionPane.showMessageDialog(this, 
-                "Tous les tours sont terminés !", 
-                "Fin de Partie", 
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+        return tentative;
     }
 
-    private Color getColorFromChar(char colorChar) {
-        switch (colorChar) {
-            case 'R': return Color.RED;
-            case 'B': return Color.BLUE;
-            case 'G': return Color.GREEN;
-            case 'Y': return Color.YELLOW;
-            default: return Color.WHITE; // Couleur par défaut
+    // Méthode pour calculer les pions blancs et noirs en comparant la tentative avec la solution secrète
+    private int calculerPionsBlancs(int ligne, char[] solutionSecrete) {
+        Pion[] tentative = getTentative(ligne);
+        boolean[] solutionUtilisee = new boolean[tailleCombinaison];
+        int pionsBlancs = 0;
+
+        // Marquer les pions bien placés pour éviter les doublons
+        for (int i = 0; i < tailleCombinaison; i++) {
+            if (tentative[i] != null && tentative[i].getCouleur() == solutionSecrete[i]) {
+                solutionUtilisee[i] = true;
+            }
         }
+
+        // Rechercher les pions corrects mais mal placés
+        for (int i = 0; i < tailleCombinaison; i++) {
+            if (tentative[i] != null && tentative[i].getCouleur() != solutionSecrete[i]) {
+                for (int j = 0; j < tailleCombinaison; j++) {
+                    if (!solutionUtilisee[j] && tentative[i].getCouleur() == solutionSecrete[j]) {
+                        pionsBlancs++;
+                        solutionUtilisee[j] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return pionsBlancs;
     }
-    
-    private void handleButtonClick(int i, int j) {
-        // Changer la couleur du bouton en fonction du choix du joueur
-        char[] couleurs = {'R', 'B', 'G', 'Y'};
-        char couleurActuelle = ' '; // Défaut
-    
-        // Récupérer la couleur actuelle du bouton
-        if (boutons[i][j].getBackground() == Color.RED) couleurActuelle = 'R';
-        else if (boutons[i][j].getBackground() == Color.BLUE) couleurActuelle = 'B';
-        else if (boutons[i][j].getBackground() == Color.GREEN) couleurActuelle = 'G';
-        else if (boutons[i][j].getBackground() == Color.YELLOW) couleurActuelle = 'Y';
-    
-        // Déterminer la couleur suivante
-        int index = (new String(couleurs).indexOf(couleurActuelle) + 1) % couleurs.length;
-        char nouvelleCouleur = couleurs[index];
-        boutons[i][j].setBackground(getColorFromChar(nouvelleCouleur)); // Appliquer la nouvelle couleur
-    
-        // Mettre à jour la tentative actuelle dans la classe Partie
-        partie.setTentativeCouleur(i, j, nouvelleCouleur); // Méthode à implémenter dans Partie
+
+    private int calculerPionsNoirs(int ligne, char[] solutionSecrete) {
+        Pion[] tentative = getTentative(ligne);
+        int pionsNoirs = 0;
+
+        for (int i = 0; i < tailleCombinaison; i++) {
+            if (tentative[i] != null && tentative[i].getCouleur() == solutionSecrete[i]) {
+                pionsNoirs++;
+            }
+        }
+
+        return pionsNoirs;
+    }
+
+    private void mettreAJourScore(int ligne) {
+    // Obtenir la solution secrète
+    char[] solutionSecrete = partie.getSolution();
+    // Calculer les pions blancs et noirs
+    int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
+    int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
+
+    // Mettre à jour les informations sur l'interface graphique
+    boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton pions blancs
+    boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton pions noirs
     }
     
     /**

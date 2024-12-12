@@ -15,8 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -37,8 +41,46 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
         couleursDisponibles.add('Y');
 
         this.partie = new Partie(tailleCombinaison, nbToursMax, couleursDisponibles);
+        
+        // Afficher les règles avant d'initialiser les composants
+        afficherRegles();
+        
         initComponents();
+        
         initialiserPlateauGraphique();
+    }
+    
+    private void afficherRegles() {
+        // Crée un JDialog pour afficher les règles
+        JDialog reglesDialog = new JDialog(this, "Règles du jeu Mastermind", true);
+        reglesDialog.setSize(700, 700);
+        reglesDialog.setLocationRelativeTo(this);
+        reglesDialog.setLayout(new BorderLayout());
+
+        // Contenu des règles
+        String regles = "<html><body style='padding:10px; font-size:12px;'>"
+                + "<h2>Règles du jeu Mastermind :</h2>"
+                + "<ol>"
+                + "<li>Devinez la combinaison secrète composée de " + tailleCombinaison + " couleurs.</li>"
+                + "<li>Les couleurs possibles sont : R (Rouge), B (Bleu), G (Vert), Y (Jaune).</li>"
+                + "<li>Vous avez " + nbToursMax + " tentatives pour trouver la bonne combinaison.</li>"
+                + "<li>Après chaque tentative, vous obtiendrez un retour indiquant :"
+                + "<ul><li>Combien de pions sont corrects et bien placés (pions noirs).</li>"
+                + "<li>Combien de pions sont corrects mais mal placés (pions blancs).</li></ul></li>"
+                + "</ol>"
+                + "<p>Bonne chance !</p>"
+                + "</body></html>";
+
+        JLabel labelRegles = new JLabel(regles);
+        labelRegles.setVerticalAlignment(SwingConstants.TOP);
+        reglesDialog.add(new JScrollPane(labelRegles), BorderLayout.CENTER);
+
+        // Bouton pour fermer la fenêtre
+        JButton boutonFermer = new JButton("OK");
+        boutonFermer.addActionListener(e -> reglesDialog.dispose());
+        reglesDialog.add(boutonFermer, BorderLayout.SOUTH);
+
+        reglesDialog.setVisible(true);
     }
 
     private void initialiserPlateauGraphique() {
@@ -303,22 +345,24 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
         PlateauDeJeu = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(700, 700));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         PlateauDeJeu.setBackground(new java.awt.Color(153, 153, 255));
+        PlateauDeJeu.setPreferredSize(new java.awt.Dimension(1350, 850));
 
         javax.swing.GroupLayout PlateauDeJeuLayout = new javax.swing.GroupLayout(PlateauDeJeu);
         PlateauDeJeu.setLayout(PlateauDeJeuLayout);
         PlateauDeJeuLayout.setHorizontalGroup(
             PlateauDeJeuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 1350, Short.MAX_VALUE)
         );
         PlateauDeJeuLayout.setVerticalGroup(
             PlateauDeJeuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 850, Short.MAX_VALUE)
         );
 
-        getContentPane().add(PlateauDeJeu, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, 400, 400));
+        getContentPane().add(PlateauDeJeu, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

@@ -8,12 +8,14 @@ package cpo_miniprojet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -32,6 +34,7 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private int nbToursMax = 12;
     private int tailleCombinaison = 4;
     private int tourCourant = 0; // Le tour actuel
+    private boolean jeuTermine = false;
 
     public CPO_Mini_Projet() {
         ArrayList<Character> couleursDisponibles = new ArrayList<>();
@@ -51,37 +54,44 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
     
     private void afficherRegles() {
-        // Crée un JDialog pour afficher les règles
-        JDialog reglesDialog = new JDialog(this, "Règles du jeu Mastermind", true);
-        reglesDialog.setSize(700, 700);
-        reglesDialog.setLocationRelativeTo(this);
-        reglesDialog.setLayout(new BorderLayout());
+    JDialog reglesDialog = new JDialog(this, "MasterMind", true);
+    reglesDialog.setSize(800, 700); // Taille plus pratique
+    reglesDialog.setLocationRelativeTo(this);
+    reglesDialog.setLayout(new BorderLayout());
 
-        // Contenu des règles
-        String regles = "<html><body style='padding:10px; font-size:12px;'>"
-                + "<h2>Règles du jeu Mastermind :</h2>"
-                + "<ol>"
-                + "<li>Devinez la combinaison secrète composée de " + tailleCombinaison + " couleurs.</li>"
-                + "<li>Les couleurs possibles sont : R (Rouge), B (Bleu), G (Vert), Y (Jaune).</li>"
-                + "<li>Vous avez " + nbToursMax + " tentatives pour trouver la bonne combinaison.</li>"
-                + "<li>Après chaque tentative, vous obtiendrez un retour indiquant :"
-                + "<ul><li>Combien de pions sont corrects et bien placés (pions noirs).</li>"
-                + "<li>Combien de pions sont corrects mais mal placés (pions blancs).</li></ul></li>"
-                + "</ol>"
-                + "<p>Bonne chance !</p>"
-                + "</body></html>";
+    // Panel du titre avec design amélioré
+    JPanel titrePanel = new JPanel();
+    JLabel titreLabel = new JLabel("MasterMind", SwingConstants.CENTER);
+    titreLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 36));
+    titreLabel.setForeground(new Color(0, 102, 204)); // Bleu stylé
+    titrePanel.add(titreLabel);
+    reglesDialog.add(titrePanel, BorderLayout.NORTH);
 
-        JLabel labelRegles = new JLabel(regles);
-        labelRegles.setVerticalAlignment(SwingConstants.TOP);
-        reglesDialog.add(new JScrollPane(labelRegles), BorderLayout.CENTER);
+    // Contenu des règles avec formatage HTML
+    String regles = "<html><body style='padding:10px; font-size:14px; font-family:Arial;'>"
+            + "<h2>Règles du jeu MasterMind :</h2>"
+            + "<br><p><strong>But du jeu :<br></strong><br>Devinez la combinaison secrète composée de 4 couleurs.<br>"
+            + "<br>Les couleurs possibles sont : <span style='color:red;'>R</span>, <span style='color:blue;'>B</span>, <span style='color:green;'>G</span>, <span style='color:orange;'>Y</span>.</p>"
+            + "<br><p><strong>Fonctionnement :<br></strong><br>Vous avez 12 tentatives pour découvrir la combinaison secrète.<br>"
+            + "<br>Après chaque tentative, vous recevez des indices :</p>"
+            + "<ul>"
+            + "<br><li><strong>Pions noirs :</strong> Couleur et position correctes.</li>"
+            + "<br><li><strong>Pions blancs :</strong> Couleur correcte mais mauvaise position.</li>"
+            + "</ul>"
+            + "<br><p>Bonne chance !</p></body></html>";
 
-        // Bouton pour fermer la fenêtre
-        JButton boutonFermer = new JButton("OK");
-        boutonFermer.addActionListener(e -> reglesDialog.dispose());
-        reglesDialog.add(boutonFermer, BorderLayout.SOUTH);
+    JLabel labelRegles = new JLabel(regles);
+    reglesDialog.add(new JScrollPane(labelRegles), BorderLayout.CENTER);
 
-        reglesDialog.setVisible(true);
-    }
+    // Bouton de fermeture
+    JButton boutonFermer = new JButton("OK");
+    boutonFermer.addActionListener(e -> reglesDialog.dispose());
+    JPanel footerPanel = new JPanel();
+    footerPanel.add(boutonFermer);
+    reglesDialog.add(footerPanel, BorderLayout.SOUTH);
+
+    reglesDialog.setVisible(true);
+}
 
     private void initialiserPlateauGraphique() {
         boutons = new JButton[nbToursMax][tailleCombinaison + 2];
@@ -127,33 +137,26 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
             int ligne = i; // Variable locale pour capturer la valeur de `i`
 
             boutonValider.addActionListener(e -> {
-                if (ligne == tourCourant && verifierLigneComplete(ligne)) {
-                    incrementerTour(); // Passer au tour suivant
-                    mettreAJourScore(ligne); // Met à jour le score pour la ligne actuelle
+                if (!jeuTermine) { // Vérifier si le jeu est déjà terminé
+                    if (ligne == tourCourant && verifierLigneComplete(ligne)) {
+                        incrementerTour(); // Passer au tour suivant
+                        mettreAJourScore(ligne); // Met à jour le score pour la ligne actuelle
 
-                    // Obtenir la solution secrète
-                    char[] solutionSecrete = partie.getSolution();
-                    // Calculer et afficher les pions blancs et noirs
-                    int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
-                    int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
+                        // Obtenir la solution secrète
+                        char[] solutionSecrete = partie.getSolution();
+                        // Calculer et afficher les pions blancs et noirs
+                        int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
+                        int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
 
-                    // Afficher les résultats sur l'interface graphique
-                    boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton blanc
-                    boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton noir
-
-                    // Afficher la solution secrète si le joueur n'a pas trouvé après 12 tours
-                    if (ligne == nbToursMax - 1 && !solutionEstTrouvee()) {
-                        JOptionPane.showMessageDialog(this,
-                            "La solution secrète était : " + new String(partie.getSolution()),
-                        "Solution Secrète",
-                        JOptionPane.INFORMATION_MESSAGE);
-                    terminerJeu(false); // Fin du jeu en cas d'échec
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, 
+                        // Afficher les résultats sur l'interface graphique
+                        boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton blanc
+                        boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton noir                      
+                    } else {
+                        JOptionPane.showMessageDialog(this, 
                     "Veuillez remplir tous les boutons avant de valider.", 
                     "Erreur", 
                     JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             });
 
@@ -279,39 +282,32 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton pions blancs
     boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton pions noirs
 
-    // Vérifier si le joueur a trouvé la solution
-    if (pionsNoirs == tailleCombinaison) {
+    // Vérifier si le joueur a trouvé la solution ou si c'est le dernier tour
+    boolean victoire = pionsNoirs == tailleCombinaison;
+    boolean derniereTentative = (ligne == nbToursMax - 1);
+
+    if (victoire || derniereTentative) {
+        String message = victoire
+                ? "Félicitations ! Vous avez trouvé la solution en " + (ligne + 1) + " tentatives.\n"
+                : "Vous avez perdu !\n";
+        message += "La solution secrète était : " + new String(solutionSecrete);
+
+        // Afficher une seule boîte de dialogue avec le message final
         JOptionPane.showMessageDialog(this,
-                "Félicitations ! Vous avez trouvé la solution en " + (ligne + 1) + " tentatives.\n" +
-                "La solution secrète était : " + new String(solutionSecrete),
-                "Victoire",
+                message,
+                victoire ? "Victoire" : "Défaite",
                 JOptionPane.INFORMATION_MESSAGE);
-        terminerJeu(true); // Arrêter le jeu avec succès
-        return;
+
+        terminerJeu(false); // Désactiver les boutons uniquement
+    }
     }
 
-    // Afficher la solution secrète uniquement à la fin du jeu si elle n'a pas été trouvée
-    if (ligne == nbToursMax - 1 && !solutionEstTrouvee()) {
-        JOptionPane.showMessageDialog(this,
-                "La solution secrète était : " + new String(solutionSecrete),
-                "Solution Secrète",
-                JOptionPane.INFORMATION_MESSAGE);
-        terminerJeu(false); // Fin du jeu en cas d'échec
-    }
-    }
-
-    // Méthode pour arrêter le jeu
-    private void terminerJeu(boolean victoire) {
+    // Méthode pour arrêter le jeu (sans afficher de message)
+    private void terminerJeu(boolean par) {
         for (int i = 0; i < boutons.length; i++) {
             for (int j = 0; j < boutons[i].length; j++) {
                 boutons[i][j].setEnabled(false); // Désactiver tous les boutons
             }
-        }
-        if (!victoire) {
-            JOptionPane.showMessageDialog(this,
-                    "Vous avez perdu ! La solution était : " + new String(partie.getSolution()),
-                    "Défaite",
-                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
     

@@ -8,9 +8,11 @@ package cpo_miniprojet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,7 +55,24 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
         
         initComponents();
         
+        ajusterDimensionGrille();
+        
         initialiserPlateauGraphique();
+    }
+    
+    private void ajusterDimensionGrille() {
+        // Obtenir les dimensions de l'écran
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        int largeurEcran = screenSize.width;
+        int hauteurEcran = screenSize.height;
+
+        // Calculer les dimensions optimales pour la grille en fonction de la taille de l'écran
+        int largeurGrille = largeurEcran / 10; // Ajuste la largeur de la grille
+        int hauteurGrille = hauteurEcran / 15; // Ajuste la hauteur de la grille
+
+        // Ajuste la grille
+        this.setSize(largeurGrille, hauteurGrille);
     }
     
     private void afficherRegles() {
@@ -120,8 +139,11 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
                         if (texte.matches("[RBGY]")) {
                             boutons[ligne][colonne].setText(texte);
                             boutons[ligne][colonne].setForeground(Color.BLACK);
+
                             // Met à jour la tentative dans la classe Partie
                             partie.setTentativeCouleur(ligne, colonne, texte.charAt(0));
+    
+                            // Met à jour la couleur du bouton en fonction de la lettre de texte
                             mettreAJourCouleurBouton(boutons[ligne][colonne], texte.charAt(0));
                         } else {
                             JOptionPane.showMessageDialog(this, 
@@ -225,18 +247,27 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     private void mettreAJourCouleurBouton(JButton bouton, char couleur) {
         switch (couleur) {
             case 'R':
+                bouton.setBackground(Color.RED);
                 bouton.setForeground(Color.RED);
                 break;
             case 'B':
+                bouton.setBackground(Color.BLUE);
                 bouton.setForeground(Color.BLUE);
                 break;
             case 'G':
+                bouton.setBackground(Color.GREEN);
                 bouton.setForeground(Color.GREEN);
                 break;
             case 'Y':
-                bouton.setForeground(Color.YELLOW);
+                bouton.setBackground(Color.ORANGE);
+                bouton.setForeground(Color.ORANGE);
                 break;
         }
+        // Désactiver le dessin de la bordure pour éviter d'interférer avec la couleur de fond
+        bouton.setBorderPainted(false);
+
+        // Rend le bouton opaque pour que la couleur soit visible de manière continue
+        bouton.setOpaque(true);
     }
 
     private Pion[] getTentative(int ligne) {

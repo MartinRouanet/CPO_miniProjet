@@ -13,11 +13,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,44 +57,44 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
     
     private void afficherRegles() {
-    JDialog reglesDialog = new JDialog(this, "MasterMind", true);
-    reglesDialog.setSize(800, 700); // Taille plus pratique
-    reglesDialog.setLocationRelativeTo(this);
-    reglesDialog.setLayout(new BorderLayout());
+        JDialog reglesDialog = new JDialog(this, "MasterMind", true);
+        reglesDialog.setSize(800, 700); // Taille plus pratique
+        reglesDialog.setLocationRelativeTo(this);
+        reglesDialog.setLayout(new BorderLayout());
 
-    // Panel du titre avec design amélioré
-    JPanel titrePanel = new JPanel();
-    JLabel titreLabel = new JLabel("MasterMind", SwingConstants.CENTER);
-    titreLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 36));
-    titreLabel.setForeground(new Color(0, 102, 204)); // Bleu stylé
-    titrePanel.add(titreLabel);
-    reglesDialog.add(titrePanel, BorderLayout.NORTH);
+        // Panel du titre avec design amélioré
+        JPanel titrePanel = new JPanel();
+        JLabel titreLabel = new JLabel("MasterMind", SwingConstants.CENTER);
+        titreLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 36));
+        titreLabel.setForeground(new Color(0, 102, 204)); // Bleu stylé
+        titrePanel.add(titreLabel);
+        reglesDialog.add(titrePanel, BorderLayout.NORTH);
 
-    // Contenu des règles avec formatage HTML
-    String regles = "<html><body style='padding:10px; font-size:14px; font-family:Arial;'>"
-            + "<h2>Règles du jeu MasterMind :</h2>"
-            + "<br><p><strong>But du jeu :<br></strong><br>Devinez la combinaison secrète composée de 4 couleurs.<br>"
-            + "<br>Les couleurs possibles sont : <span style='color:red;'>R</span>, <span style='color:blue;'>B</span>, <span style='color:green;'>G</span>, <span style='color:orange;'>Y</span>.</p>"
-            + "<br><p><strong>Fonctionnement :<br></strong><br>Vous avez 12 tentatives pour découvrir la combinaison secrète.<br>"
-            + "<br>Après chaque tentative, vous recevez des indices :</p>"
-            + "<ul>"
-            + "<br><li><strong>Pions noirs :</strong> Couleur et position correctes.</li>"
-            + "<br><li><strong>Pions blancs :</strong> Couleur correcte mais mauvaise position.</li>"
-            + "</ul>"
-            + "<br><p>Bonne chance !</p></body></html>";
+        // Contenu des règles avec formatage HTML
+        String regles = "<html><body style='padding:10px; font-size:14px; font-family:Arial;'>"
+                + "<h2>Règles du jeu MasterMind :</h2>"
+                + "<br><p><strong>But du jeu :<br></strong><br>Devinez la combinaison secrète composée de 4 couleurs.<br>"
+                + "<br>Les couleurs possibles sont : <span style='color:red;'>R</span>, <span style='color:blue;'>B</span>, <span style='color:green;'>G</span>, <span style='color:orange;'>Y</span>.</p>"
+                + "<br><p><strong>Fonctionnement :<br></strong><br>Vous avez 12 tentatives pour découvrir la combinaison secrète.<br>"
+                + "<br>Après chaque tentative, vous recevez des indices :</p>"
+                + "<ul>"
+                + "<br><li><strong>Pions noirs :</strong> Couleur et position correctes.</li>"
+                + "<br><li><strong>Pions blancs :</strong> Couleur correcte mais mauvaise position.</li>"
+                + "</ul>"
+                + "<br><p>Bonne chance !</p></body></html>";
 
-    JLabel labelRegles = new JLabel(regles);
-    reglesDialog.add(new JScrollPane(labelRegles), BorderLayout.CENTER);
+        JLabel labelRegles = new JLabel(regles);
+        reglesDialog.add(new JScrollPane(labelRegles), BorderLayout.CENTER);
 
-    // Bouton de fermeture
-    JButton boutonFermer = new JButton("OK");
-    boutonFermer.addActionListener(e -> reglesDialog.dispose());
-    JPanel footerPanel = new JPanel();
-    footerPanel.add(boutonFermer);
-    reglesDialog.add(footerPanel, BorderLayout.SOUTH);
+        // Bouton de fermeture
+        JButton boutonFermer = new JButton("OK");
+        boutonFermer.addActionListener(e -> reglesDialog.dispose());
+        JPanel footerPanel = new JPanel();
+        footerPanel.add(boutonFermer);
+        reglesDialog.add(footerPanel, BorderLayout.SOUTH);
 
-    reglesDialog.setVisible(true);
-}
+        reglesDialog.setVisible(true);
+    }
 
     private void initialiserPlateauGraphique() {
         boutons = new JButton[nbToursMax][tailleCombinaison + 2];
@@ -119,6 +122,7 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
                             boutons[ligne][colonne].setForeground(Color.BLACK);
                             // Met à jour la tentative dans la classe Partie
                             partie.setTentativeCouleur(ligne, colonne, texte.charAt(0));
+                            mettreAJourCouleurBouton(boutons[ligne][colonne], texte.charAt(0));
                         } else {
                             JOptionPane.showMessageDialog(this, 
                                     "Entrée invalide. Seules les lettres R, B, G, Y sont autorisées.", 
@@ -186,37 +190,54 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
 
     private void incrementerTour() {
-    if (tourCourant < nbToursMax - 1) {
-        // Désactiver les boutons de la ligne actuelle, y compris le bouton "Valider"
-        for (int j = 0; j < tailleCombinaison; j++) {
-            boutons[tourCourant][j].setEnabled(false);
+        if (tourCourant < nbToursMax - 1) {
+            // Désactiver les boutons de la ligne actuelle, y compris le bouton "Valider"
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(false);
+            }
+            // Désactiver le bouton "Valider" de la ligne actuelle
+            JButton boutonValiderActuel = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+            boutonValiderActuel.setEnabled(false);
+
+            // Passer au tour suivant
+            tourCourant++;
+
+            // Activer les boutons de la ligne suivante sans désactiver les boutons noirs et blancs
+            for (int j = 0; j < tailleCombinaison; j++) {
+                boutons[tourCourant][j].setEnabled(true);
+            }
+
+            // Mettre à jour les boutons noirs et blancs pour suivre l'avancement des lignes
+            boutons[tourCourant][tailleCombinaison].setEnabled(true); // Bouton blanc
+            boutons[tourCourant][tailleCombinaison + 1].setEnabled(true); // Bouton noir
+
+            // Activer le bouton "Valider" de la ligne suivante
+            JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
+            boutonValiderSuivant.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                    "Tous les tours sont terminés !", 
+                    "Fin de Partie", 
+                    JOptionPane.INFORMATION_MESSAGE);
         }
-        // Désactiver le bouton "Valider" de la ligne actuelle
-        JButton boutonValiderActuel = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
-        boutonValiderActuel.setEnabled(false);
-
-        // Passer au tour suivant
-        tourCourant++;
-
-        // Activer les boutons de la ligne suivante sans désactiver les boutons noirs et blancs
-        for (int j = 0; j < tailleCombinaison; j++) {
-            boutons[tourCourant][j].setEnabled(true);
-        }
-
-        // Mettre à jour les boutons noirs et blancs pour suivre l'avancement des lignes
-        boutons[tourCourant][tailleCombinaison].setEnabled(true); // Bouton blanc
-        boutons[tourCourant][tailleCombinaison + 1].setEnabled(true); // Bouton noir
-
-        // Activer le bouton "Valider" de la ligne suivante
-        JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
-        boutonValiderSuivant.setEnabled(true);
-    } else {
-        JOptionPane.showMessageDialog(this, 
-                "Tous les tours sont terminés !", 
-                "Fin de Partie", 
-                JOptionPane.INFORMATION_MESSAGE);
     }
-}
+    
+    private void mettreAJourCouleurBouton(JButton bouton, char couleur) {
+        switch (couleur) {
+            case 'R':
+                bouton.setForeground(Color.RED);
+                break;
+            case 'B':
+                bouton.setForeground(Color.BLUE);
+                break;
+            case 'G':
+                bouton.setForeground(Color.GREEN);
+                break;
+            case 'Y':
+                bouton.setForeground(Color.YELLOW);
+                break;
+        }
+    }
 
     private Pion[] getTentative(int ligne) {
         Pion[] tentative = new Pion[tailleCombinaison];
@@ -272,34 +293,34 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
     }
     
     private void mettreAJourScore(int ligne) {
-    // Obtenir la solution secrète
-    char[] solutionSecrete = partie.getSolution();
-    // Calculer les pions blancs et noirs
-    int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
-    int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
+        // Obtenir la solution secrète
+        char[] solutionSecrete = partie.getSolution();
+        // Calculer les pions blancs et noirs
+        int pionsBlancs = calculerPionsBlancs(ligne, solutionSecrete);
+        int pionsNoirs = calculerPionsNoirs(ligne, solutionSecrete);
 
-    // Mettre à jour les informations sur l'interface graphique
-    boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton pions blancs
-    boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton pions noirs
+        // Mettre à jour les informations sur l'interface graphique
+        boutons[ligne][tailleCombinaison].setText(Integer.toString(pionsBlancs)); // Bouton pions blancs
+        boutons[ligne][tailleCombinaison + 1].setText(Integer.toString(pionsNoirs)); // Bouton pions noirs
 
-    // Vérifier si le joueur a trouvé la solution ou si c'est le dernier tour
-    boolean victoire = pionsNoirs == tailleCombinaison;
-    boolean derniereTentative = (ligne == nbToursMax - 1);
+        // Vérifier si le joueur a trouvé la solution ou si c'est le dernier tour
+        boolean victoire = pionsNoirs == tailleCombinaison;
+        boolean derniereTentative = (ligne == nbToursMax - 1);
 
-    if (victoire || derniereTentative) {
-        String message = victoire
-                ? "Félicitations ! Vous avez trouvé la solution en " + (ligne + 1) + " tentatives.\n"
-                : "Vous avez perdu !\n";
-        message += "La solution secrète était : " + new String(solutionSecrete);
+        if (victoire || derniereTentative) {
+            String message = victoire
+                    ? "Félicitations ! Vous avez trouvé la solution en " + (ligne + 1) + " tentatives.\n"
+                    : "Vous avez perdu !\n";
+            message += "La solution secrète était : " + new String(solutionSecrete);
 
-        // Afficher une seule boîte de dialogue avec le message final
-        JOptionPane.showMessageDialog(this,
-                message,
-                victoire ? "Victoire" : "Défaite",
-                JOptionPane.INFORMATION_MESSAGE);
+            // Afficher une seule boîte de dialogue avec le message final
+            JOptionPane.showMessageDialog(this,
+                    message,
+                    victoire ? "Victoire" : "Défaite",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-        terminerJeu(false); // Désactiver les boutons uniquement
-    }
+            terminerJeu(false); // Désactiver les boutons uniquement
+        }
     }
 
     // Méthode pour arrêter le jeu (sans afficher de message)

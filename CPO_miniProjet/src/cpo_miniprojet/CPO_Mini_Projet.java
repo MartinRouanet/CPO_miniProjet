@@ -363,17 +363,17 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         PlateauDeJeu.setBackground(new java.awt.Color(153, 153, 255));
-        PlateauDeJeu.setPreferredSize(new java.awt.Dimension(1350, 850));
+        PlateauDeJeu.setPreferredSize(new java.awt.Dimension(1200, 700));
 
         javax.swing.GroupLayout PlateauDeJeuLayout = new javax.swing.GroupLayout(PlateauDeJeu);
         PlateauDeJeu.setLayout(PlateauDeJeuLayout);
         PlateauDeJeuLayout.setHorizontalGroup(
             PlateauDeJeuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1350, Short.MAX_VALUE)
+            .addGap(0, 1200, Short.MAX_VALUE)
         );
         PlateauDeJeuLayout.setVerticalGroup(
             PlateauDeJeuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 850, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
 
         getContentPane().add(PlateauDeJeu, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, -1, -1));

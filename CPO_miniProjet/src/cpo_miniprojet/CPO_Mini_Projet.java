@@ -7,22 +7,13 @@
 package cpo_miniprojet;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -235,13 +226,12 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
 
             // Activer le bouton "Valider" de la ligne suivante
             JButton boutonValiderSuivant = (JButton) PlateauDeJeu.getComponent(tourCourant * (tailleCombinaison + 3) + tailleCombinaison);
-            boutonValiderSuivant.setEnabled(true);
+            boutonValiderSuivant.setEnabled(true);            
         } else {
             JOptionPane.showMessageDialog(this, 
                     "Tous les tours sont terminés !", 
                     "Fin de Partie", 
                     JOptionPane.INFORMATION_MESSAGE);
-            dispose(); // Fermer la fenêtre de jeu
         }
     }
     

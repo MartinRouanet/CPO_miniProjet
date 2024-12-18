@@ -241,6 +241,7 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
                     "Tous les tours sont terminés !", 
                     "Fin de Partie", 
                     JOptionPane.INFORMATION_MESSAGE);
+            dispose(); // Fermer la fenêtre de jeu
         }
     }
     
@@ -351,6 +352,8 @@ public class CPO_Mini_Projet extends javax.swing.JFrame {
                     JOptionPane.INFORMATION_MESSAGE);
 
             terminerJeu(false); // Désactiver les boutons uniquement
+            dispose(); // Fermer la fenêtre de jeu
+            return; // Terminer l'exécution de l'événement
         }
     }
 
